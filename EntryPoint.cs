@@ -5,7 +5,7 @@ using ExtraObjectiveSetup.JSON;
 using GTFO.API;
 using HarmonyLib;
 
-namespace EOSExt.SecDoor
+namespace EOSExt.DimensionWarp
 {
     [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("GTFO.FloLib", BepInDependency.DependencyFlags.HardDependency)]
@@ -17,7 +17,7 @@ namespace EOSExt.SecDoor
     public class EntryPoint: BasePlugin
     {
         public const string AUTHOR = "Inas";
-        public const string PLUGIN_NAME = "EOSExt.SecDoor";
+        public const string PLUGIN_NAME = "EOSExt.DimensionWarp";
         public const string VERSION = "1.0.0";
 
         private Harmony m_Harmony;
@@ -26,10 +26,10 @@ namespace EOSExt.SecDoor
         {
             SetupManagers();
 
-            m_Harmony = new Harmony("EOSExt.SecDoor");
+            m_Harmony = new Harmony("EOSExt.DimensionWarp");
             m_Harmony.PatchAll();
 
-            EOSLogger.Log("ExtraObjectiveSetup.SecDoor loaded.");
+            EOSLogger.Log("ExtraObjectiveSetup.DimensionWarp loaded.");
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace EOSExt.SecDoor
         /// </summary>
         private void SetupManagers()
         {
-            SecDoorIntTextOverrideManager.Current.Init();
+            DimensionWarpManager.Current.Init();
         }
     }
 }
