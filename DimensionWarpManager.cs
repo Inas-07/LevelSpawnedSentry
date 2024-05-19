@@ -114,7 +114,8 @@ namespace EOSExt.DimensionWarp
                 if (itemInLevel != null)
                 {
                     var prevNode = itemInLevel.CourseNode;
-                    if(prevNode.m_dimension.DimensionIndex == dimensionIndex 
+                    if(itemInLevel.internalSync.GetCurrentState().placement.droppedOnFloor
+                        && prevNode.m_dimension.DimensionIndex == dimensionIndex 
                         && prevNode.LayerType == layer 
                         && prevNode.m_zone.LocalIndex == localIndex
                         
@@ -274,10 +275,12 @@ namespace EOSExt.DimensionWarp
                 if (SNet.IsMaster && def.OnWarp.WarpTeam_WarpAllWarpableBigPickupItems)
                 {
                     var itemInLevel = warpable.TryCast<ItemInLevel>();
-                    if (itemInLevel != null && itemInLevel.CanWarp)
+                    if (itemInLevel != null && itemInLevel.CanWarp && itemInLevel.internalSync.GetCurrentState().placement.droppedOnFloor)
                     {
                         var itemPosition = warpLocations[itemPositionIdx].Position.ToVector3();
                         WarpItem(itemInLevel, def.DimensionIndex, itemPosition);
+                        EOSLogger.Warning($"{itemInLevel.PublicName}");
+
                         itemPositionIdx = (itemPositionIdx + 1) % warpLocations.Count;
                         continue;
                     }

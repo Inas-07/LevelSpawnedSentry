@@ -18,7 +18,7 @@ namespace EOSExt.DimensionWarp
     {
         public const string AUTHOR = "Inas";
         public const string PLUGIN_NAME = "EOSExt.DimensionWarp";
-        public const string VERSION = "1.0.0";
+        public const string VERSION = "1.0.1";
 
         private Harmony m_Harmony;
 
