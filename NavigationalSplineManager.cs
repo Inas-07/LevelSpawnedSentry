@@ -42,7 +42,8 @@ namespace EOSExt.DimensionWarp
                     splineGO.transform.SetParent(go.transform);
 
                     var spline = splineGO.AddComponent<CP_Holopath_Spline>();
-                    spline.m_splineGeneratorPrefab = GameObject.Instantiate(Asset.SplineGeneratorGO, splineGO.transform);
+
+                    spline.m_splineGeneratorPrefab = Asset.SplineGeneratorGO; // spline.Setup will do the copy-instantiation 
                     spline.Setup(false);
                     spline.GeneratePath(splineDef.From.ToVector3(), splineDef.To.ToVector3());
                     if(groupDef.RevealSpeedMulti > 0f)
