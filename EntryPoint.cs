@@ -17,8 +17,8 @@ namespace EOSExt.DimensionWarp
     public class EntryPoint: BasePlugin
     {
         public const string AUTHOR = "Inas";
-        public const string PLUGIN_NAME = "EOSExt.DimensionWarp";
-        public const string VERSION = "1.0.1";
+        public const string PLUGIN_NAME = "EOSExt.NavigationalSpline";
+        public const string VERSION = "1.0.0";
 
         private Harmony m_Harmony;
 
@@ -26,10 +26,10 @@ namespace EOSExt.DimensionWarp
         {
             SetupManagers();
 
-            m_Harmony = new Harmony("EOSExt.DimensionWarp");
+            m_Harmony = new Harmony("EOSExt.NavigationalSpline");
             m_Harmony.PatchAll();
 
-            EOSLogger.Log("ExtraObjectiveSetup.DimensionWarp loaded.");
+            EOSLogger.Log("ExtraObjectiveSetup.NavigationalSpline loaded.");
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace EOSExt.DimensionWarp
         /// </summary>
         private void SetupManagers()
         {
-            DimensionWarpManager.Current.Init();
+            NavigationalSplineManager.Current.Init();
         }
     }
 }
