@@ -5,7 +5,7 @@ using ExtraObjectiveSetup.JSON;
 using GTFO.API;
 using HarmonyLib;
 
-namespace EOSExt.DimensionWarp
+namespace EOSExt.NavigationalSpline
 {
     [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("GTFO.FloLib", BepInDependency.DependencyFlags.HardDependency)]

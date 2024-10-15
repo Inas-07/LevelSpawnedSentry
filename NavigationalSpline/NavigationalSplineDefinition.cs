@@ -3,7 +3,7 @@ using GameData;
 using LevelGeneration;
 using System.Collections.Generic;
 
-namespace EOSExt.DimensionWarp.Definition
+namespace EOSExt.NavigationalSpline.Definition
 {
     public class Spline
     {

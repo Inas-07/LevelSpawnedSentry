@@ -1,6 +1,6 @@
 ﻿using AssetShards;
 using ChainedPuzzles;
-using EOSExt.DimensionWarp.Definition;
+using EOSExt.NavigationalSpline.Definition;
 using EOSExt.NavigationalSpline;
 using ExtraObjectiveSetup.BaseClasses;
 using ExtraObjectiveSetup.ExtendedWardenEvents;
@@ -11,7 +11,7 @@ using GTFO.API;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace EOSExt.DimensionWarp
+namespace EOSExt.NavigationalSpline
 {
     public class NavigationalSplineManager: GenericExpeditionDefinitionManager<NavigationalSplineDefinition>
     {
