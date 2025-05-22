@@ -24,9 +24,13 @@ namespace EOSExt.LevelSpawnedSentry
             }
 
             var lss = sentry.gameObject.GetComponent<LSS>();
-            lss.StateReplicator.SetState(new() 
+            bool targetEnemy = e.EnemyID == 0;
+            bool targetPlayer = e.SustainedEventSlotIndex > 0;
+            lss.StateReplicator.SetState(new()
             {
-                enabled = e.Enabled
+                Enabled = e.Enabled,
+                TargetEnemy = targetEnemy,
+                TargetPlayer = targetPlayer
             });
         }
     }

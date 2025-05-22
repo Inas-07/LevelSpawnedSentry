@@ -42,4 +42,3 @@ namespace EOSExt.LevelSpawnedSentry
         }
     }
 }
-

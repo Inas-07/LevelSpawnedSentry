@@ -8,7 +8,11 @@ namespace EOSExt.LevelSpawnedSentry.Definition
 {
     public struct LSSState
     {
-        public bool enabled { get; set; } = true;
+        public bool Enabled { get; set; } = true;
+
+        public bool TargetEnemy { get; set; } = true;
+
+        public bool TargetPlayer { get; set; } = false;
 
         public LSSState() { }
     }

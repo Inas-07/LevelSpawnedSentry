@@ -37,7 +37,8 @@
     <Compile Include="LSS.cs" />
     <Compile Include="Patches\DisableAnalytic.cs" />
     <Compile Include="Patches\OnLSSSpawned.cs" />
-    <Compile Include="Patches\StateOverride.cs" />
+    <Compile Include="Patches\OnSetup.cs" />
+    <Compile Include="Patches\Targeting.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies.props" />
