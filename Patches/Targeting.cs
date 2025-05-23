@@ -14,8 +14,6 @@ namespace EOSExt.LevelSpawnedSentry.Patches
     [HarmonyPatch]
     internal static class Targeting
     {
-
-        // TODO: Test
         [HarmonyPrefix]
         [HarmonyWrapSafe]
         [HarmonyPatch(typeof(SentryGunInstance_Detection), nameof(SentryGunInstance_Detection.UpdateDetection))]
@@ -24,9 +22,8 @@ namespace EOSExt.LevelSpawnedSentry.Patches
             var lssComp = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSSComp>();
 
             if (lssComp == null) return true;
-            //EOSLogger.Warning($"Overriding: enemy: {lss.StateReplicator.State.TargetEnemy}, player {lss.StateReplicator.State.TargetPlayer} + {__instance.m_targetPlayers}");
 
-            if (lssComp.LSS.StateReplicator.State.TargetEnemy) return true;
+            if (lssComp.LSS.State.TargetEnemy) return true;
 
             if (Clock.Time > __instance.m_scanningTimer)
             {

@@ -32,7 +32,7 @@ namespace EOSExt.LevelSpawnedSentry.Patches
             var lssComp = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSSComp>();
             if (lssComp == null) return;
 
-            __instance.m_targetPlayers = lssComp.LSS.StateReplicator.State.TargetPlayer;
+            __instance.m_targetPlayers = lssComp.LSS.State.TargetPlayer;
         }
 
         [HarmonyPostfix]
@@ -47,13 +47,10 @@ namespace EOSExt.LevelSpawnedSentry.Patches
             var lssComp = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSSComp>();
             if (lssComp == null) return;
 
-            var state = lssComp.LSS.StateReplicator.State;
+            var state = lssComp.LSS.State;
             var c = LSS.GetScanningColor(state.TargetEnemy, state.TargetPlayer);
             __instance.m_scanningColor = c;
 
-            //__instance.m_spotLight.color = c;
-            //__instance.m_scannerPlane?.SetColor(c);
-            //__instance.m_targetingAlign?.Visor?.material.SetColor("_Color", c);
             __instance.SetVisualStatus(eSentryGunStatus.Scanning, true);
         }
     }

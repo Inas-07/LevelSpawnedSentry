@@ -18,7 +18,9 @@ namespace EOSExt.LevelSpawnedSentry
 
         public int InstanceIndex { get; }
 
-        public StateReplicator<LSSState> StateReplicator { get; private set; }
+        public LSSState State => StateReplicator?.State ?? default;
+
+        internal StateReplicator<LSSState> StateReplicator { get; private set; }
 
         public LSSComp LSSComp { get; private set; }
 
@@ -40,7 +42,7 @@ namespace EOSExt.LevelSpawnedSentry
 
             if(isReassign)
             {
-                OnStateChanged(StateReplicator.State, StateReplicator.State, false);
+                OnStateChanged(State, State, false);
             }
         }
 
@@ -95,7 +97,7 @@ namespace EOSExt.LevelSpawnedSentry
 
         private void SpawnLSS_OnEnterLevel() => SpawnLSS(Def.InitialAmmo, Def.AmmoCap);
 
-        private void SpawnLSS_OnRecall() => SpawnLSS(StateReplicator.State.Ammo, StateReplicator.State.AmmoMaxCap);
+        private void SpawnLSS_OnRecall() => SpawnLSS(State.Ammo, State.AmmoMaxCap);
 
         private void SpawnLSS(float ammo, float ammoMaxcap)
         {

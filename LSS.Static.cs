@@ -22,24 +22,8 @@ namespace EOSExt.LevelSpawnedSentry
 
         private static Coroutine s_syncLSSAmmoCoroutine = null;
 
-        private static void Clear()
-        {
-            if (s_syncLSSAmmoCoroutine != null) 
-            {
-                CoroutineManager.StopCoroutine(s_syncLSSAmmoCoroutine);
-                s_syncLSSAmmoCoroutine = null;
-            }
-        }
-
-        private static void OnBuildDone()
-        {
-            if (LevelSpawnedSentryManager.Current.LSSInstances.Count < 1) return;
-            if (s_syncLSSAmmoCoroutine == null)
-            {
-                s_syncLSSAmmoCoroutine = CoroutineManager.StartCoroutine(s_sync().WrapToIl2Cpp());
-            }
-        }
-
+        // Sync ammo of all sentries periodically.
+        // Note that WEEvent (ChangeLSSState) will sync sentry ammo as well,
         private static System.Collections.IEnumerator s_sync()
         {
             int i = 0;
