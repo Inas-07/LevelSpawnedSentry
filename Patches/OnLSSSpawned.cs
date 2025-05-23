@@ -1,5 +1,6 @@
 ﻿using ExtraObjectiveSetup.Utils;
 using HarmonyLib;
+using LevelGeneration;
 
 namespace EOSExt.LevelSpawnedSentry.Patches
 {
@@ -29,6 +30,8 @@ namespace EOSExt.LevelSpawnedSentry.Patches
 
             var pickupInt = __instance.PickupInteraction.Cast<Interact_Timed>();
             pickupInt.enabled = false;
+
+            Dimension.RemoveWarpable(__instance.Cast<IWarpableObject>());
         }
     }
 }

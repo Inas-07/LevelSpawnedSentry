@@ -1,7 +1,5 @@
 ﻿using AK;
 using EOSExt.LevelSpawnedSentry.Definition;
-using ExtraObjectiveSetup;
-using ExtraObjectiveSetup.Utils;
 using Il2CppInterop.Runtime.Injection;
 using UnityEngine;
 
@@ -34,14 +32,15 @@ namespace EOSExt.LevelSpawnedSentry
                     var c = LSS.GetScanningColor(def.InitialState.TargetEnemy, def.InitialState.TargetPlayer);
                     marker.SetStyle(eNavMarkerStyle.LocationBeacon);
                     marker.SetColor(c);
-                    marker.SetTitle(LSS.GetMarkerText(def.InitialState.TargetEnemy, def.InitialState.TargetPlayer));
                     marker.SetVisible(def.InitialState.Enabled);
+                    marker.SetTitle(LSS.GetMarkerText(def.InitialState.TargetEnemy, def.InitialState.TargetPlayer));
                 }
             }
 
             return this;
         }
 
+        // Visuals, state changed
         internal void OnStateChanged(LSSState oldState, LSSState newState, bool isRecall)
         {
             var s = Sentry;
@@ -50,10 +49,8 @@ namespace EOSExt.LevelSpawnedSentry
             if (newState.Enabled)
             {
                 s.m_isSetup = true;
-                //s.m_visuals.SetVisualStatus(eSentryGunStatus.BootUp);
                 s.m_isScanning = false;
                 s.m_startScanTimer = Clock.Time + s.m_initialScanDelay;
-                //s.Sound.Post(EVENTS.SENTRYGUN_LOW_AMMO_WARNING);
             }
             else
             {
@@ -62,7 +59,6 @@ namespace EOSExt.LevelSpawnedSentry
                 s.m_isSetup = false;
                 s.m_isScanning = false;
                 s.m_isFiring = false;
-                //s.Sound.Post(EVENTS.SENTRYGUN_STOP_ALL_LOOPS);
             }
 
             var d = s.m_detection?.TryCast<SentryGunInstance_Detection>();
@@ -79,8 +75,8 @@ namespace EOSExt.LevelSpawnedSentry
             }
 
             marker?.SetColor(c);
-            marker?.SetTitle(LSS.GetMarkerText(newState.TargetEnemy, newState.TargetPlayer));
             marker?.SetVisible(newState.Enabled);
+            marker?.SetTitle(LSS.GetMarkerText(newState.TargetEnemy, newState.TargetPlayer));
 
             // sound
             if (oldState.Enabled != newState.Enabled)
@@ -101,7 +97,6 @@ namespace EOSExt.LevelSpawnedSentry
         {
             GuiManager.NavMarkerLayer.RemoveMarker(marker);
             marker = null;
-            EOSLogger.Error($"LSSComp Destroyed: {Def.WorldEventObjectFilter}");
         }
 
         static LSSComp() 

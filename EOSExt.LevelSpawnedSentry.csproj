@@ -36,6 +36,7 @@
     <Compile Include="LevelSpawnedSentryManager.WardenEvents.cs" />
     <Compile Include="LSS.ColorNText.cs" />
     <Compile Include="LSS.cs" />
+    <Compile Include="LSS.Static.cs" />
     <Compile Include="LSSComp.cs" />
     <Compile Include="Patches\DisableAnalytic.cs" />
     <Compile Include="Patches\OnLSSSpawned.cs" />

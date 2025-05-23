@@ -1,19 +1,8 @@
 ﻿using EOSExt.LevelSpawnedSentry.Definition;
 using ExtraObjectiveSetup;
 using FloLib.Networks.Replications;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static UnityEngine.CullingGroup;
-using UnityEngine;
-using AK;
-using static EAB_ProjectileShooterSquidBoss;
 using ExtraObjectiveSetup.Utils;
-using FluffyUnderware.Curvy.Generator;
 using GameData;
-using Il2CppInterop.Runtime.Injection;
 using GTFO.API;
 using AIGraph;
 using Gear;
@@ -63,7 +52,11 @@ namespace EOSExt.LevelSpawnedSentry
             uint sid = EOSNetworking.AllotReplicatorID();
             if (sid != EOSNetworking.INVALID_ID)
             {
-                StateReplicator = StateReplicator<LSSState>.Create(sid, def.InitialState, LifeTimeType.Level);
+                var initialState = def.InitialState;
+                initialState.Ammo = Def.InitialAmmo;
+                initialState.AmmoMaxCap = Def.AmmoCap;
+
+                StateReplicator = StateReplicator<LSSState>.Create(sid, initialState, LifeTimeType.Level);
                 StateReplicator.OnStateChanged += OnStateChanged;
                 //StateReplicator.SetState(def.InitialState);
             }
@@ -75,7 +68,7 @@ namespace EOSExt.LevelSpawnedSentry
             {
                 EOSLogger.Warning("LSS.OnStateChanged recall! Gonna re-assign LSSComp!");
                 // respawn sentry here
-                SpawnLSS();
+                SpawnLSS_OnRecall();
                 return;
             }
 
@@ -94,13 +87,17 @@ namespace EOSExt.LevelSpawnedSentry
             EOSLogger.Error($"LSS Destroyed: {Def.WorldEventObjectFilter}");
 
             LevelAPI.OnBuildDone -= SetupReplicator;
-            LevelAPI.OnEnterLevel -= SpawnLSS;
+            LevelAPI.OnEnterLevel -= SpawnLSS_OnEnterLevel;
 
             StateReplicator?.Unload();
             StateReplicator = null;
         }
 
-        private void SpawnLSS()
+        private void SpawnLSS_OnEnterLevel() => SpawnLSS(Def.InitialAmmo, Def.AmmoCap);
+
+        private void SpawnLSS_OnRecall() => SpawnLSS(StateReplicator.State.Ammo, StateReplicator.State.AmmoMaxCap);
+
+        private void SpawnLSS(float ammo, float ammoMaxcap)
         {
             if (!SNet.IsMaster) return;
 
@@ -145,16 +142,8 @@ namespace EOSExt.LevelSpawnedSentry
                 def.Rotation.ToQuaternion(),
                 node,
                 null,
-                def.InitialAmmo,
-                def.AmmoCap);
-        }
-
-        internal static LSS Instantiate(LevelSpawnedSentryDefinition def, int instanceIndex)
-        {
-            var lss = new LSS(def, instanceIndex);
-            LevelAPI.OnBuildDone += lss.SetupReplicator;
-            LevelAPI.OnEnterLevel += lss.SpawnLSS;
-            return lss;
+                ammo,
+                ammoMaxcap);
         }
 
         private LSS(LevelSpawnedSentryDefinition def, int instanceIndex)
