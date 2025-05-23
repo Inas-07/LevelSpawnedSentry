@@ -11,26 +11,24 @@ namespace EOSExt.LevelSpawnedSentry.Patches
         private static void Post_(SentryGunInstance __instance, pGearSpawnData spawnData)
         {
             var publicName = spawnData.gearIDRange.publicName.data;
-            if (!publicName.StartsWith(LevelSpawnedSentryManager.PUBLIC_NAME_PREFIX))
+            if (!publicName.StartsWith(LSS.PUBLIC_NAME_PREFIX))
             {
                 return;
             }
 
-            var expDef = LevelSpawnedSentryManager.Current.ExpeditionDefinitions;
-            if (!int.TryParse(publicName.Split('_')[1], out int instanceIndex) || instanceIndex < 0 || instanceIndex >= expDef.Count)
+            var instances = LevelSpawnedSentryManager.Current.LSSInstances;
+            if (!int.TryParse(publicName.Split('_')[1], out int instanceIndex) || instanceIndex < 0 || instanceIndex >= instances.Count)
             {
                 EOSLogger.Error($"SentryGunInstance.OnSpawn: got publicName '{publicName}' with in valid instanceIndex");
                 return;
             }
 
-            var def = expDef[instanceIndex];
+            var lss = instances[instanceIndex];
+
+            LevelSpawnedSentryManager.Current.LSSInstances[instanceIndex].AssignInstance(__instance.gameObject.AddComponent<LSSComp>().Setup(lss));
 
             var pickupInt = __instance.PickupInteraction.Cast<Interact_Timed>();
             pickupInt.enabled = false;
-            //__instance.LocallyPlaced = true;
-
-            __instance.gameObject.AddComponent<LSS>().Setup(def);
-            LevelSpawnedSentryManager.Current.RegisterLSS(def.WorldEventObjectFilter, __instance);
         }
     }
 }

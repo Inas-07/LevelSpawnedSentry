@@ -21,12 +21,12 @@ namespace EOSExt.LevelSpawnedSentry.Patches
         [HarmonyPatch(typeof(SentryGunInstance_Detection), nameof(SentryGunInstance_Detection.UpdateDetection))]
         private static bool Pre_UpdateDetection(SentryGunInstance_Detection __instance) 
         {
-            var lss = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSS>();
+            var lssComp = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSSComp>();
 
-            if (lss == null) return true;
+            if (lssComp == null) return true;
             //EOSLogger.Warning($"Overriding: enemy: {lss.StateReplicator.State.TargetEnemy}, player {lss.StateReplicator.State.TargetPlayer} + {__instance.m_targetPlayers}");
 
-            if (lss.StateReplicator.State.TargetEnemy) return true;
+            if (lssComp.LSS.StateReplicator.State.TargetEnemy) return true;
 
             if (Clock.Time > __instance.m_scanningTimer)
             {

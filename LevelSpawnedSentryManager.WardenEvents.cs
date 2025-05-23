@@ -17,13 +17,12 @@ namespace EOSExt.LevelSpawnedSentry
 
         private static void ChangeLSSState(WardenObjectiveEventData e)
         {
-            if(!Current.LSS.TryGetValue(e.WorldEventObjectFilter, out var sentry))
+            if(!Current.LSSDict.TryGetValue(e.WorldEventObjectFilter, out var lss))
             {
                 EOSLogger.Error($"ChangeLSSState: Cannot find LSS with name '{e.WorldEventObjectFilter}'");
                 return;
             }
 
-            var lss = sentry.gameObject.GetComponent<LSS>();
             bool targetEnemy = e.EnemyID == 0;
             bool targetPlayer = e.SustainedEventSlotIndex > 0;
             lss.StateReplicator.SetState(new()

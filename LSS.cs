@@ -1,194 +1,166 @@
-﻿using AK;
-using EOSExt.LevelSpawnedSentry.Definition;
+﻿using EOSExt.LevelSpawnedSentry.Definition;
 using ExtraObjectiveSetup;
-using ExtraObjectiveSetup.Utils;
 using FloLib.Networks.Replications;
-using GameData;
-using Il2CppInterop.Runtime.Injection;
-using LevelGeneration;
-using Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static UnityEngine.CullingGroup;
 using UnityEngine;
+using AK;
+using static EAB_ProjectileShooterSquidBoss;
+using ExtraObjectiveSetup.Utils;
+using FluffyUnderware.Curvy.Generator;
+using GameData;
+using Il2CppInterop.Runtime.Injection;
+using GTFO.API;
+using AIGraph;
+using Gear;
+using SNetwork;
 
 namespace EOSExt.LevelSpawnedSentry
 {
-    public class LSS: MonoBehaviour
+    public partial class LSS
     {
-        public LevelSpawnedSentryDefinition Def { get; private set; }
+        public const string PUBLIC_NAME_PREFIX = "E0$L$$";
 
-        // just for simple state-sync.
+        public LevelSpawnedSentryDefinition Def { get; }
+
+        public int InstanceIndex { get; }
+
         public StateReplicator<LSSState> StateReplicator { get; private set; }
 
-        public SentryGunInstance_ScannerVisuals_Plane Visuals => gameObject.GetComponent<SentryGunInstance_ScannerVisuals_Plane>();
+        public LSSComp LSSComp { get; private set; }
 
-        public SentryGunInstance Sentry => gameObject.GetComponent<SentryGunInstance>();
-
-        public NavMarker NavMarker { get; private set; }
-
-        internal void Setup(LevelSpawnedSentryDefinition def)
+        internal void AssignInstance(LSSComp comp)
         {
-            if (this.Def != null) return;
-            this.Def = def;
+            if(!comp.IsSetup)
+            {
+                EOSLogger.Error($"LSS: Assigning to LSS '{comp.Def.WorldEventObjectFilter}' an un-setup LSSComp!");
+                return;
+            }
+
+            bool isReassign = LSSComp != null;
+            if (isReassign)
+            {
+                EOSLogger.Warning($"LSS: re-assigning LSSComp to '{comp.Def.WorldEventObjectFilter}'!");
+            }
+
+            LSSComp = comp;
+
+            if(isReassign)
+            {
+                OnStateChanged(StateReplicator.State, StateReplicator.State, false);
+            }
+        }
+
+        internal void SetupReplicator()
+        {
+            if (StateReplicator != null) return;
+            var def = Def;
 
             uint sid = EOSNetworking.AllotReplicatorID();
             if (sid != EOSNetworking.INVALID_ID)
             {
                 StateReplicator = StateReplicator<LSSState>.Create(sid, def.InitialState, LifeTimeType.Level);
                 StateReplicator.OnStateChanged += OnStateChanged;
-
-                StateReplicator.SetState(def.InitialState);
-            }
-
-            NavMarker = GuiManager.NavMarkerLayer.PrepareGenericMarker(gameObject);
-            if (NavMarker != null)
-            {
-                var c = LSS.GetScanningColor(def.InitialState.TargetEnemy, def.InitialState.TargetPlayer);
-                NavMarker.SetColor(c);
-                //NavMarker.SetStyle(eNavMarkerStyle.LocationBeaconNoText);
-                NavMarker.SetStyle(eNavMarkerStyle.LocationBeacon);
-                NavMarker.SetTitle(GetMarkerText(def.InitialState.TargetEnemy, def.InitialState.TargetPlayer));
-                NavMarker.SetVisible(def.InitialState.Enabled);
+                //StateReplicator.SetState(def.InitialState);
             }
         }
 
         private void OnStateChanged(LSSState oldState, LSSState newState, bool isRecall)
         {
-            var s = Sentry;
-            var v = Visuals;
-
-            if (oldState.Enabled != newState.Enabled)
+            if(isRecall)
             {
-                if (newState.Enabled)
-                {
-                    s.m_isSetup = true;
-                    s.m_visuals.SetVisualStatus(eSentryGunStatus.BootUp);
-                    s.m_isScanning = false;
-                    s.m_startScanTimer = Clock.Time + s.m_initialScanDelay;
-                    //s.Sound.Post(EVENTS.SENTRYGUN_LOW_AMMO_WARNING);
-                }
-                else
-                {
-                    v.m_scannerPlane.SetColor(_offColor);
-                    v.UpdateLightProps(_offColor, false);
-                    s.m_isSetup = false;
-                    s.m_isScanning = false;
-                    s.m_isFiring = false;
-                    //s.Sound.Post(EVENTS.SENTRYGUN_STOP_ALL_LOOPS);
-                }
+                EOSLogger.Warning("LSS.OnStateChanged recall! Gonna re-assign LSSComp!");
+                // respawn sentry here
+                SpawnLSS();
+                return;
             }
 
-            var d = s.m_detection?.TryCast<SentryGunInstance_Detection>();
-            if(d != null)
+            if(LSSComp == null)
             {
-                d.m_targetPlayers = newState.TargetPlayer;
-            }
-
-            var c = LSS.GetScanningColor(newState.TargetEnemy, newState.TargetPlayer);
-            v.m_scanningColor = c;
-            if (v.m_core != null) // visual was setup
-            {
-                v.SetVisualStatus(eSentryGunStatus.Scanning, true);
-                //v.m_spotLight.color = c;
-                //v.m_scannerPlane?.SetColor(c);
-                //v.m_targetingAlign?.Visor?.material.SetColor("_Color", c);
-            }
-
-            NavMarker?.SetColor(c);
-            NavMarker?.SetTitle(GetMarkerText(newState.TargetEnemy, newState.TargetPlayer));
-            NavMarker?.SetVisible(newState.Enabled);
-
-            // sound
-            if (oldState.Enabled != newState.Enabled)
-            {
-                s.Sound.Post(newState.Enabled ? EVENTS.SENTRYGUN_LOW_AMMO_WARNING : EVENTS.SENTRYGUN_STOP_ALL_LOOPS);
+                EOSLogger.Error("LSS.OnStateChanged: LSSComp is null!");
             }
             else
             {
-                if(newState.Enabled && 
-                    (oldState.TargetPlayer != newState.TargetPlayer || oldState.TargetEnemy != newState.TargetEnemy))
-                {
-                    s.Sound.Post(EVENTS.SENTRYGUN_LOW_AMMO_WARNING);
-                }
+                LSSComp.OnStateChanged(oldState, newState, isRecall);
             }
         }
 
-        private void OnDestroy()
+        internal void Destroy()
         {
-            StateReplicator?.Unload();
-            GameObject.Destroy(NavMarker);
-            NavMarker = null;
             EOSLogger.Error($"LSS Destroyed: {Def.WorldEventObjectFilter}");
+
+            LevelAPI.OnBuildDone -= SetupReplicator;
+            LevelAPI.OnEnterLevel -= SpawnLSS;
+
+            StateReplicator?.Unload();
+            StateReplicator = null;
         }
 
-        private static readonly Color _offColor = ColorExt.Hex("#00000000");
-
-        private static readonly Color _targetBothColor = ColorExt.Hex("FFFA00");
-
-        private static readonly Color _targetPlayerOnlyColor = ColorExt.Hex("#F0192EFF");
-
-        private static readonly Color _targetEnemyOnlyColor = ColorExt.Hex("#00895CFF");
-
-        private static readonly Color _doesNotTargetColor = ColorExt.Hex("#198AF0FF") * 0.5f;
-
-        internal static Color GetScanningColor(bool targetEnemy, bool targetPlayer)
+        private void SpawnLSS()
         {
-            Color c = Color.grey * 0.5f;
-            if (targetEnemy && targetPlayer)
+            if (!SNet.IsMaster) return;
+
+            var def = Def;
+
+            var pos = def.Position.ToVector3();
+            if (!AIG_GeomorphNodeVolume.TryGetGeomorphVolume(0, def.DimensionIndex, pos, out var resultingGeoVolume)
+                || !resultingGeoVolume.m_voxelNodeVolume.TryGetPillar(pos, out var pillar)
+                || !pillar.TryGetVoxelNode(pos.y, out var bestNode)
+                || !AIG_NodeCluster.TryGetNodeCluster(bestNode.ClusterID, out var nodeCluster))
             {
-                c = _targetBothColor;
-            }
-            else if (targetEnemy && !targetPlayer)
-            {
-                c = _targetEnemyOnlyColor;
-            }
-            else if (!targetEnemy && targetPlayer)
-            {
-                c = _targetPlayerOnlyColor;
-            }
-            else
-            {
-                c = _doesNotTargetColor;
+                EOSLogger.Error("SpawnLSS: Position is not valid, try again inside an area.");
+                return;
             }
 
-            return c;
+            var node = nodeCluster.CourseNode;
+
+            var db = GameDataBlockBase<PlayerOfflineGearDataBlock>.GetBlock(def.PlayerOfflineGearDBId);
+            if (db == null)
+            {
+                EOSLogger.Error($"SpawnLSS: missing PlayerOfflineGearDataBlock with Id {def.PlayerOfflineGearDBId}");
+                return;
+            }
+
+            var idrange = new GearIDRange(db.GearJSON);
+
+            // For indexing config on sentry instantiation
+            idrange.PublicGearName = $"{PUBLIC_NAME_PREFIX}_{InstanceIndex}";
+
+            idrange.PlayfabItemId = db.name;
+            idrange.PlayfabItemInstanceId = $"OfflineGear_LSS_ID_{db.persistentID}";
+            idrange.OfflineGearType = eOfflineGearType.SpawnedInLevel;
+
+            var itemdb = (idrange.GetCompID(eGearComponent.BaseItem) > 0U) ?
+                GameDataBlockBase<ItemDataBlock>.GetBlock(idrange.GetCompID(eGearComponent.BaseItem)) : null;
+
+            ItemReplicationManager.SpawnGear(idrange,
+                //new System.Action<ISyncedItem, PlayerAgent>(OnLSSSpawned), 
+                null, // Callback cannot be invoked, fk
+                ItemMode.Instance,
+                pos,
+                def.Rotation.ToQuaternion(),
+                node,
+                null,
+                def.InitialAmmo,
+                def.AmmoCap);
         }
 
-        internal static string GetMarkerText(bool targetEnemy, bool targetPlayer)
+        internal static LSS Instantiate(LevelSpawnedSentryDefinition def, int instanceIndex)
         {
-            string textDBName = string.Empty;
-            string text = string.Empty;
-            if (targetEnemy && targetPlayer)
-            {
-                textDBName = "LSS.State.Both";
-                text = "HAVOC";
-            }
-            else if (targetEnemy && !targetPlayer)
-            {
-                textDBName = "LSS.State.Normal";
-                text = "NORMAL";
-            }
-            else if (!targetEnemy && targetPlayer)
-            {
-                textDBName = "LSS.State.Player";
-                text = "HOSTILE";
-            }
-            else
-            {
-                textDBName = "LSS.State.Idle";
-                text = "IDLE";
-            }
-
-            var textDB = GameDataBlockBase<TextDataBlock>.GetBlock(textDBName);
-            return textDB != null ? Text.Get(textDB.persistentID) : text;
+            var lss = new LSS(def, instanceIndex);
+            LevelAPI.OnBuildDone += lss.SetupReplicator;
+            LevelAPI.OnEnterLevel += lss.SpawnLSS;
+            return lss;
         }
 
-        static LSS() 
-        { 
-            ClassInjector.RegisterTypeInIl2Cpp<LSS>();
+        private LSS(LevelSpawnedSentryDefinition def, int instanceIndex)
+        {
+            this.Def = def;
+            this.InstanceIndex = instanceIndex;
         }
     }
 }

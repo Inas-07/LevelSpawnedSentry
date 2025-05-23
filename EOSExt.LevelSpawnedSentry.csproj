@@ -34,7 +34,9 @@
     <Compile Include="EntryPoint.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LevelSpawnedSentryManager.WardenEvents.cs" />
+    <Compile Include="LSS.ColorNText.cs" />
     <Compile Include="LSS.cs" />
+    <Compile Include="LSSComp.cs" />
     <Compile Include="Patches\DisableAnalytic.cs" />
     <Compile Include="Patches\OnLSSSpawned.cs" />
     <Compile Include="Patches\OnSetup.cs" />

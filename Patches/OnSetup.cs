@@ -11,16 +11,17 @@ namespace EOSExt.LevelSpawnedSentry.Patches
     [HarmonyPatch]
     internal static class OnSetup
     {
+        // Called earlier than SentryGunInstance.OnSpawn
         [HarmonyPostfix]
         [HarmonyPatch(typeof(SentryGunInstance), nameof(SentryGunInstance.Setup))]
         private static void Post_D_Setup(SentryGunInstance __instance)
         {
-            var lss = __instance.gameObject.GetComponent<LSS>();
-            EOSLogger.Error($"SentryGunInstance OnDestroy. Is LSS? : {lss != null}");
+            var lssComp = __instance.gameObject.GetComponent<LSSComp>();
+            //EOSLogger.Error($"SentryGunInstance Setup. Is LSS? : {lssComp != null}");
 
-            if(lss != null)
+            if(lssComp != null)
             {
-                EOSLogger.Error($"LSS: {lss.Def.WorldEventObjectFilter}");
+                EOSLogger.Error($"LSS: {lssComp.Def.WorldEventObjectFilter}");
             }
         }
 
@@ -28,10 +29,10 @@ namespace EOSExt.LevelSpawnedSentry.Patches
         [HarmonyPatch(typeof(SentryGunInstance_Detection), nameof(SentryGunInstance_Detection.Setup))]
         private static void Post_D_Setup(SentryGunInstance_Detection __instance)
         {
-            var lss = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSS>();
-            if (lss == null) return;
+            var lssComp = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSSComp>();
+            if (lssComp == null) return;
 
-            __instance.m_targetPlayers = lss.StateReplicator.State.TargetPlayer;
+            __instance.m_targetPlayers = lssComp.LSS.StateReplicator.State.TargetPlayer;
         }
 
         [HarmonyPostfix]
@@ -43,10 +44,10 @@ namespace EOSExt.LevelSpawnedSentry.Patches
                 EOSLogger.Error("SentryGunInstance_ScannerVisuals_Plane.Setup: got a null scannerPlane / targetingAlign?");
             }
 
-            var lss = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSS>();
-            if (lss == null) return;
+            var lssComp = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSSComp>();
+            if (lssComp == null) return;
 
-            var state = lss.StateReplicator.State;
+            var state = lssComp.LSS.StateReplicator.State;
             var c = LSS.GetScanningColor(state.TargetEnemy, state.TargetPlayer);
             __instance.m_scanningColor = c;
 
