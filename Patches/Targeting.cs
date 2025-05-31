@@ -1,4 +1,5 @@
 ﻿using Enemies;
+using EOSExt.LevelSpawnedSentry.PlayerGUIMessage;
 using ExtraObjectiveSetup.Utils;
 using HarmonyLib;
 using Player;
@@ -16,12 +17,33 @@ namespace EOSExt.LevelSpawnedSentry.Patches
     {
         [HarmonyPrefix]
         [HarmonyWrapSafe]
+        [HarmonyPatch(typeof(SentryGunInstance), nameof(SentryGunInstance.WantToScan))]
+        private static bool Pre_WantToScan(SentryGunInstance __instance, ref bool __result)
+        {
+            var lssComp = __instance.gameObject.GetComponent<LSSComp>();
+
+            if (lssComp == null) return true;
+
+            if(!lssComp.LSS.State.Enabled)
+            {
+                __result = false;
+                return false;
+            }
+
+            return true;
+        }
+
+
+        [HarmonyPrefix]
+        [HarmonyWrapSafe]
         [HarmonyPatch(typeof(SentryGunInstance_Detection), nameof(SentryGunInstance_Detection.UpdateDetection))]
         private static bool Pre_UpdateDetection(SentryGunInstance_Detection __instance) 
         {
             var lssComp = __instance.m_core.TryCast<SentryGunInstance>()?.gameObject.GetComponent<LSSComp>();
 
             if (lssComp == null) return true;
+
+            if (!lssComp.LSS.State.Enabled) return false;
 
             if (lssComp.LSS.State.TargetEnemy) return true;
 
@@ -42,6 +64,15 @@ namespace EOSExt.LevelSpawnedSentry.Patches
                         {
                             __instance.Target = playerAgent.gameObject;
                             __instance.TargetAimTrans = playerAgent.TentacleTarget;
+
+                            if(playerAgent.IsLocallyOwned)
+                            {
+                                PlayerGUIMessageManager.Current.OnPlayerTargeted();
+                            }
+                        }
+                        else
+                        {
+                            PlayerGUIMessageManager.Current.Clear();
                         }
                     }
                 }

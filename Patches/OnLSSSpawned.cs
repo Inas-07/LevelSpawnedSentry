@@ -32,6 +32,7 @@ namespace EOSExt.LevelSpawnedSentry.Patches
             pickupInt.enabled = false;
 
             Dimension.RemoveWarpable(__instance.Cast<IWarpableObject>());
+            EOSLogger.Warning($"LSS OnSpawn: {lss.Def.WorldEventObjectFilter}");
         }
     }
 }

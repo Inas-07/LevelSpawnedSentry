@@ -60,7 +60,10 @@ namespace EOSExt.LevelSpawnedSentry
 
                 StateReplicator = StateReplicator<LSSState>.Create(sid, initialState, LifeTimeType.Level);
                 StateReplicator.OnStateChanged += OnStateChanged;
-                //StateReplicator.SetState(def.InitialState);
+                if (SNet.IsMaster)
+                {
+                    StateReplicator.SetState(initialState);
+                }
             }
         }
 

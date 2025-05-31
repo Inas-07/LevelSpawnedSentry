@@ -1,5 +1,6 @@
 ﻿using AK;
 using EOSExt.LevelSpawnedSentry.Definition;
+using ExtraObjectiveSetup.Utils;
 using Il2CppInterop.Runtime.Injection;
 using UnityEngine;
 
@@ -35,6 +36,8 @@ namespace EOSExt.LevelSpawnedSentry
                     marker.SetVisible(def.InitialState.Enabled);
                     marker.SetTitle(LSS.GetMarkerText(def.InitialState.TargetEnemy, def.InitialState.TargetPlayer));
                 }
+
+                UpdateVisuals();
             }
 
             return this;
@@ -43,22 +46,25 @@ namespace EOSExt.LevelSpawnedSentry
         // Visuals, state changed
         internal void OnStateChanged(LSSState oldState, LSSState newState, bool isRecall)
         {
+            EOSLogger.Debug($"LSSOnStateChanged \"{Def.WorldEventObjectFilter}\"! OldState: [{oldState}], NewState: {newState}");
+
             var s = Sentry;
-            var v = Visuals;
 
             if (newState.Enabled)
             {
                 s.m_isSetup = true;
                 s.m_isScanning = false;
                 s.m_startScanTimer = Clock.Time + s.m_initialScanDelay;
+
+                s.Sound.Post(EVENTS.SENTRYGUN_LOW_AMMO_WARNING);
             }
             else
             {
-                v.m_scannerPlane.SetColor(LSS.OffColor);
-                v.UpdateLightProps(LSS.OffColor, false);
                 s.m_isSetup = false;
                 s.m_isScanning = false;
                 s.m_isFiring = false;
+
+                s.Sound.Post(EVENTS.SENTRYGUN_STOP_ALL_LOOPS);
             }
 
             var d = s.m_detection?.TryCast<SentryGunInstance_Detection>();
@@ -67,29 +73,46 @@ namespace EOSExt.LevelSpawnedSentry
                 d.m_targetPlayers = newState.TargetPlayer;
             }
 
-            var c = LSS.GetScanningColor(newState.TargetEnemy, newState.TargetPlayer);
-            v.m_scanningColor = c;
-            if (v.m_core != null) // visual was setup
+            UpdateVisuals();
+        }
+
+        internal void UpdateVisuals()
+        {
+            var state = LSS.State;
+            var v = Visuals;
+
+            var c = LSS.GetScanningColor(state.TargetEnemy, state.TargetPlayer);
+            v.m_scanningColorOrg = c;
+            
+            if (state.Enabled)
             {
-                v.SetVisualStatus(eSentryGunStatus.Scanning, true);
+                if (v.m_core != null) // visual was setup
+                {
+                    v.SetVisualStatus(eSentryGunStatus.Scanning, true);
+                }
+
+                if (state.MarkerVisible)
+                {
+                    marker?.SetColor(c);
+                    marker?.SetVisible(true);
+                    marker?.SetTitle(LSS.GetMarkerText(state.TargetEnemy, state.TargetPlayer));
+                }
+                else
+                {
+                    marker?.SetVisible(false);
+                }
             }
 
-            marker?.SetColor(c);
-            marker?.SetVisible(newState.Enabled);
-            marker?.SetTitle(LSS.GetMarkerText(newState.TargetEnemy, newState.TargetPlayer));
-
-            // sound
-            if (oldState.Enabled != newState.Enabled)
-            {
-                s.Sound.Post(newState.Enabled ? EVENTS.SENTRYGUN_LOW_AMMO_WARNING : EVENTS.SENTRYGUN_STOP_ALL_LOOPS);
-            }
             else
             {
-                if (newState.Enabled &&
-                    (oldState.TargetPlayer != newState.TargetPlayer || oldState.TargetEnemy != newState.TargetEnemy))
+                if (v.m_core != null)
                 {
-                    s.Sound.Post(EVENTS.SENTRYGUN_LOW_AMMO_WARNING);
+                    //v.SetVisualStatus(eSentryGunStatus.Disabled, true);
+                    v.m_scannerPlane.SetColor(LSS.OffColor);
+                    v.UpdateLightProps(LSS.OffColor, false);
                 }
+                
+                marker?.SetVisible(false);
             }
         }
 

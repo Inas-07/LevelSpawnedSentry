@@ -15,6 +15,8 @@ namespace EOSExt.LevelSpawnedSentry.Definition
 
         public bool TargetPlayer { get; set; } = false;
 
+        public bool MarkerVisible { get; set; } = true;
+
         [JsonIgnore]
         public float Ammo { get; set; } = 0.5f;
 
@@ -30,6 +32,11 @@ namespace EOSExt.LevelSpawnedSentry.Definition
             TargetPlayer = o.TargetPlayer;  
             Ammo = o.Ammo;
             AmmoMaxCap = o.AmmoMaxCap;
+        }
+
+        public override string ToString()
+        {
+            return $"Enabled: {Enabled}, TargetEnemy/Player: {TargetEnemy}/{TargetPlayer}";
         }
     }
 }

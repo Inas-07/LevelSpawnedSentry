@@ -4,12 +4,22 @@ using ExtraObjectiveSetup.Utils;
 using GTFO.API;
 using SNetwork;
 using System;
+using System.Text.Json.Serialization;
 using UnityEngine;
 
 namespace EOSExt.LevelSpawnedSentry
 {
     public partial class LSS
     {
+        //public static readonly LSSState DUMMY_STATE = new() {
+        //    Enabled = false,
+        //    TargetEnemy = true,
+        //    TargetPlayer = false,
+        //    MarkerVisible = false,
+        //    Ammo = 0.0f,
+        //    AmmoMaxCap =0.0f
+        //};
+
         internal static LSS Instantiate(LevelSpawnedSentryDefinition def, int instanceIndex)
         {
             var lss = new LSS(def, instanceIndex);
@@ -39,17 +49,24 @@ namespace EOSExt.LevelSpawnedSentry
                         if (0 <= i && i < LevelSpawnedSentryManager.Current.LSSInstances.Count)
                         {
                             var instance = LevelSpawnedSentryManager.Current.LSSInstances[i];
-                            var sentry = instance.LSSComp.Sentry;
-                            if (sentry != null)
+                            if (instance.LSSComp == null) 
                             {
-                                var state = instance.StateReplicator.State;
-                                if (Math.Abs(sentry.Ammo - state.Ammo) > 1e-4)
+                                EOSLogger.Error($"LSSSync: found LSS without LSSComp: {instance.Def.WorldEventObjectFilter}");
+                            }
+                            else
+                            {
+                                var sentry = instance.LSSComp.Sentry;
+                                if (sentry != null)
                                 {
-                                    var syncState = new LSSState(state) with
+                                    var state = instance.StateReplicator.State;
+                                    if (Math.Abs(sentry.Ammo - state.Ammo) > 1e-4)
                                     {
-                                        Ammo = sentry.Ammo
-                                    };
-                                    instance.StateReplicator.SetState(syncState);
+                                        var syncState = new LSSState(state) with
+                                        {
+                                            Ammo = sentry.Ammo
+                                        };
+                                        instance.StateReplicator.SetState(syncState);
+                                    }
                                 }
                             }
                         }

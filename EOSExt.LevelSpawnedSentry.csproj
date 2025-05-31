@@ -42,7 +42,9 @@
     <Compile Include="Patches\DisableWarp.cs" />
     <Compile Include="Patches\OnLSSSpawned.cs" />
     <Compile Include="Patches\OnSetup.cs" />
+    <Compile Include="Patches\OnPlayerGuiLayerSetup.cs" />
     <Compile Include="Patches\Targeting.cs" />
+    <Compile Include="PlayerGUIMessage\PlayerGUIMessageManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies.props" />

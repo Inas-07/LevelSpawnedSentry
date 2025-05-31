@@ -1,6 +1,7 @@
 ﻿using EOSExt.LevelSpawnedSentry.Definition;
 using ExtraObjectiveSetup.Utils;
 using GameData;
+using SNetwork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,19 +25,24 @@ namespace EOSExt.LevelSpawnedSentry
                 return;
             }
 
-            bool targetEnemy = e.EnemyID == 0;
-            bool targetPlayer = e.SustainedEventSlotIndex > 0;
-            
-            var newState = new LSSState(lss.StateReplicator.State) with
+            if(SNet.IsMaster)
             {
-                Enabled = e.Enabled,
-                TargetEnemy = targetEnemy,
-                TargetPlayer = targetPlayer,
-                Ammo = lss.LSSComp.Sentry.Ammo,
-                AmmoMaxCap = lss.LSSComp.Sentry.AmmoMaxCap,
-            };
+                bool targetEnemy = e.EnemyID == 0;
+                bool targetPlayer = e.SustainedEventSlotIndex > 0;
+                bool markerVisible = e.Count == 0;
 
-            lss.StateReplicator.SetState(newState);
+                var newState = new LSSState(lss.StateReplicator.State) with
+                {
+                    Enabled = e.Enabled,
+                    TargetEnemy = targetEnemy,
+                    TargetPlayer = targetPlayer,
+                    MarkerVisible = markerVisible,
+                    Ammo = lss.LSSComp.Sentry.Ammo,
+                    AmmoMaxCap = lss.LSSComp.Sentry.AmmoMaxCap,
+                };
+
+                lss.StateReplicator.SetState(newState);
+            }
         }
     }
 }
