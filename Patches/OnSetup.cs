@@ -1,4 +1,5 @@
-﻿using ExtraObjectiveSetup.Utils;
+﻿using EOSExt.LevelSpawnedSentry.Impl;
+using ExtraObjectiveSetup.Utils;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;

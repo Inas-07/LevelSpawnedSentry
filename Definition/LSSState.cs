@@ -29,7 +29,8 @@ namespace EOSExt.LevelSpawnedSentry.Definition
         {
             Enabled = o.Enabled;
             TargetEnemy = o.TargetEnemy;
-            TargetPlayer = o.TargetPlayer;  
+            TargetPlayer = o.TargetPlayer;
+            MarkerVisible = o.MarkerVisible;
             Ammo = o.Ammo;
             AmmoMaxCap = o.AmmoMaxCap;
         }

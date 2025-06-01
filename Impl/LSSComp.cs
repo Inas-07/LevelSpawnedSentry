@@ -4,7 +4,7 @@ using ExtraObjectiveSetup.Utils;
 using Il2CppInterop.Runtime.Injection;
 using UnityEngine;
 
-namespace EOSExt.LevelSpawnedSentry
+namespace EOSExt.LevelSpawnedSentry.Impl
 {
     public class LSSComp: MonoBehaviour
     {
@@ -82,7 +82,7 @@ namespace EOSExt.LevelSpawnedSentry
             var v = Visuals;
 
             var c = LSS.GetScanningColor(state.TargetEnemy, state.TargetPlayer);
-            v.m_scanningColorOrg = c;
+            v.m_scanningColor = c;
             
             if (state.Enabled)
             {

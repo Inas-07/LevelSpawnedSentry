@@ -97,6 +97,8 @@ namespace EOSExt.LevelSpawnedSentry
 
         static LSS()
         {
+            SetupSync();
+
             s_syncLSSAmmoCoroutine = CoroutineManager.StartPersistantCoroutine(s_sync().WrapToIl2Cpp());
             EOSLogger.Debug("===========================");
             EOSLogger.Debug("LSS Sync coroutine started");

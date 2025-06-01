@@ -7,6 +7,7 @@ using GTFO.API;
 using AIGraph;
 using Gear;
 using SNetwork;
+using EOSExt.LevelSpawnedSentry.Impl;
 
 namespace EOSExt.LevelSpawnedSentry
 {
