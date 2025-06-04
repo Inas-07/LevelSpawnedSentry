@@ -1,4 +1,5 @@
 ﻿using EOSExt.LevelSpawnedSentry.Impl;
+using ExtraObjectiveSetup.Utils;
 using GTFO.API;
 using Player;
 using System;
@@ -20,6 +21,7 @@ namespace EOSExt.LevelSpawnedSentry
 
         internal void OnUpdateMaster()
         {
+            m_LSSTargeted.LSSInstanceIndex = InstanceIndex;
             NetworkAPI.InvokeEvent<LSSTargeted>(LSS_SYNC_EVT, m_LSSTargeted);
         }
     }

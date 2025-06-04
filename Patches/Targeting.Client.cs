@@ -11,7 +11,8 @@ namespace EOSExt.LevelSpawnedSentry.Patches
     [HarmonyPatch]
     internal static partial class Targeting
     {
-        [HarmonyPostfix]
+        [HarmonyPrefix]
+        [HarmonyWrapSafe]
         [HarmonyPatch(typeof(SentryGunInstance_Sync), nameof(SentryGunInstance_Sync.UpdateMaster))]
         private static void Post_UpdateMaster(SentryGunInstance_Sync __instance)
         {
@@ -25,7 +26,8 @@ namespace EOSExt.LevelSpawnedSentry.Patches
             lssComp.LSS.OnUpdateMaster();
         }
 
-        [HarmonyPostfix]
+        [HarmonyPrefix]
+        [HarmonyWrapSafe]
         [HarmonyPatch(typeof(SentryGunInstance_Sync), nameof(SentryGunInstance_Sync.UpdateClient))]
         private static void Post_UpdateClient(SentryGunInstance_Sync __instance)
         {
@@ -51,22 +53,29 @@ namespace EOSExt.LevelSpawnedSentry.Patches
                 || !__instance.m_detection.HasTarget || __instance.m_detection.Target == null)
             {
                 PlayerGUIMessageManager.Current.OnLocalPlayerUnTargeted(lssComp.LSS);
+                lssComp.LSS.OnTargetedPlayer(null);
                 return;
             }
 
             var maybePlayer = __instance.m_detection.Target.GetComponent<PlayerAgent>();
-            if (maybePlayer == null) return;
-
-            if (maybePlayer.IsLocallyOwned)
+            if (maybePlayer == null)
             {
-                PlayerGUIMessageManager.Current.OnLocalPlayerTargeted(lssComp.LSS);
+                PlayerGUIMessageManager.Current.OnLocalPlayerUnTargeted(lssComp.LSS);
+                lssComp.LSS.OnTargetedPlayer(null);
             }
             else
             {
-                PlayerGUIMessageManager.Current.OnLocalPlayerUnTargeted(lssComp.LSS);
-            }
+                if (maybePlayer.IsLocallyOwned)
+                {
+                    PlayerGUIMessageManager.Current.OnLocalPlayerTargeted(lssComp.LSS);
+                }
+                else
+                {
+                    PlayerGUIMessageManager.Current.OnLocalPlayerUnTargeted(lssComp.LSS);
+                }
 
-            lssComp.LSS.OnTargetedPlayer(maybePlayer);
+                lssComp.LSS.OnTargetedPlayer(maybePlayer);
+            }
         }
 
         [HarmonyPostfix]
@@ -93,10 +102,12 @@ namespace EOSExt.LevelSpawnedSentry.Patches
             if (lssComp.LSS.LastSyncedTargetedPlayer == localPlayer.Owner.PlayerSlotIndex())
             {
                 PlayerGUIMessageManager.Current.OnLocalPlayerTargeted(lssComp.LSS);
+                //lssComp.LSS.OnTargetedPlayer(localPlayer);
             }
             else
             {
                 PlayerGUIMessageManager.Current.OnLocalPlayerUnTargeted(lssComp.LSS);
+                //lssComp.LSS.OnTargetedPlayer(null);
             }
         }
     }

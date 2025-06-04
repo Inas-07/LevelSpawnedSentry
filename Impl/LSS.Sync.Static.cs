@@ -24,6 +24,8 @@ namespace EOSExt.LevelSpawnedSentry
 
             var lss = LevelSpawnedSentryManager.Current.LSSInstances[instanceIndex];
             lss.m_LSSTargeted.PlayerSlotIndex = data.PlayerSlotIndex;
+
+            EOSLogger.Warning($"LSSSync.OnReceive: LSS_{instanceIndex}, Player_{data.PlayerSlotIndex}");
         }
 
         private static void SetupSync()

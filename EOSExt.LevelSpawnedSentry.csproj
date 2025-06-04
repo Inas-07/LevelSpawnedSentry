@@ -38,12 +38,13 @@
     <Compile Include="Impl\LSS.cs" />
     <Compile Include="Impl\LSS.Static.cs" />
     <Compile Include="Impl\LSS.Sync.cs" />
-    <Compile Include="Impl\LSS.Sync.Old.cs" />
+    <Compile Include="Impl\LSSDebug.cs" />
     <Compile Include="Impl\LSS.Sync.Static.cs" />
     <Compile Include="Impl\LSSComp.cs" />
     <Compile Include="Impl\LSSTargeted.cs" />
     <Compile Include="Patches\DisableAnalytic.cs" />
     <Compile Include="Patches\DisableWarp.cs" />
+    <Compile Include="Patches\Firing.cs" />
     <Compile Include="Patches\OnLSSSpawned.cs" />
     <Compile Include="Patches\OnSetup.cs" />
     <Compile Include="Patches\OnPlayerGuiLayerSetup.cs" />
