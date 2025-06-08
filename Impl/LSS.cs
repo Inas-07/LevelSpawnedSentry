@@ -19,9 +19,9 @@ namespace EOSExt.LevelSpawnedSentry
 
         public int InstanceIndex { get; }
 
-        public LSSState State => StateReplicator?.State ?? default;
+        public LSSSyncState State => StateReplicator?.State ?? default;
 
-        internal StateReplicator<LSSState> StateReplicator { get; private set; }
+        internal StateReplicator<LSSSyncState> StateReplicator { get; private set; }
 
         public LSSComp LSSComp { get; private set; }
 
@@ -55,11 +55,12 @@ namespace EOSExt.LevelSpawnedSentry
             uint sid = EOSNetworking.AllotReplicatorID();
             if (sid != EOSNetworking.INVALID_ID)
             {
-                var initialState = def.InitialState;
-                initialState.Ammo = Def.InitialAmmo;
-                initialState.AmmoMaxCap = Def.AmmoCap;
+                var initialState = new LSSSyncState(def.InitialState) with                     
+                { 
+                    Ammo = def.InitialAmmo,
+                };
 
-                StateReplicator = StateReplicator<LSSState>.Create(sid, initialState, LifeTimeType.Level);
+                StateReplicator = StateReplicator<LSSSyncState>.Create(sid, initialState, LifeTimeType.Level);
                 StateReplicator.OnStateChanged += OnStateChanged;
                 if (SNet.IsMaster)
                 {
@@ -68,7 +69,7 @@ namespace EOSExt.LevelSpawnedSentry
             }
         }
 
-        private void OnStateChanged(LSSState oldState, LSSState newState, bool isRecall)
+        private void OnStateChanged(LSSSyncState oldState, LSSSyncState newState, bool isRecall)
         {
             if(isRecall)
             {
@@ -99,11 +100,11 @@ namespace EOSExt.LevelSpawnedSentry
             StateReplicator = null;
         }
 
-        private void SpawnLSS_OnEnterLevel() => SpawnLSS(Def.InitialAmmo, Def.AmmoCap);
+        private void SpawnLSS_OnEnterLevel() => SpawnLSS(Def.InitialAmmo);
 
-        private void SpawnLSS_OnRecall() => SpawnLSS(State.Ammo, State.AmmoMaxCap);
+        private void SpawnLSS_OnRecall() => SpawnLSS(State.Ammo);
 
-        private void SpawnLSS(float ammo, float ammoMaxcap)
+        private void SpawnLSS(float ammo)
         {
             if (!SNet.IsMaster) return;
 
@@ -149,7 +150,7 @@ namespace EOSExt.LevelSpawnedSentry
                 node,
                 null,
                 ammo,
-                ammoMaxcap);
+                Def.AmmoCap);
         }
 
         private LSS(LevelSpawnedSentryDefinition def, int instanceIndex)

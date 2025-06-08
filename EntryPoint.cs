@@ -19,7 +19,7 @@ namespace EOSExt.LevelSpawnedSentry
     {
         public const string AUTHOR = "Inas";
         public const string PLUGIN_NAME = "EOSExt.LevelSpawnedSentry";
-        public const string VERSION = "1.1.0";
+        public const string VERSION = "1.1.1";
 
         private Harmony m_Harmony;
 

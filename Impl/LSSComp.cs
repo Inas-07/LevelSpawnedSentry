@@ -38,13 +38,16 @@ namespace EOSExt.LevelSpawnedSentry.Impl
                 }
 
                 UpdateVisuals();
+                SetCanRefill(def.InitialState.CanRefill);
             }
 
             return this;
         }
 
+        public void SetCanRefill(bool canRefill) => Sentry.AmmoMaxCap = canRefill ? Def.AmmoCap : 0f;
+
         // Visuals, state changed
-        internal void OnStateChanged(LSSState oldState, LSSState newState, bool isRecall)
+        internal void OnStateChanged(LSSSyncState oldState, LSSSyncState newState, bool isRecall)
         {
             EOSLogger.Debug($"LSSOnStateChanged \"{Def.WorldEventObjectFilter}\"! OldState: [{oldState}], NewState: {newState}");
 
@@ -72,6 +75,8 @@ namespace EOSExt.LevelSpawnedSentry.Impl
             {
                 d.m_targetPlayers = newState.TargetPlayer;
             }
+
+            SetCanRefill(newState.CanRefill);
 
             UpdateVisuals();
         }

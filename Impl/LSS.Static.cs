@@ -11,15 +11,6 @@ namespace EOSExt.LevelSpawnedSentry
 {
     public partial class LSS
     {
-        //public static readonly LSSState DUMMY_STATE = new() {
-        //    Enabled = false,
-        //    TargetEnemy = true,
-        //    TargetPlayer = false,
-        //    MarkerVisible = false,
-        //    Ammo = 0.0f,
-        //    AmmoMaxCap =0.0f
-        //};
-
         internal static LSS Instantiate(LevelSpawnedSentryDefinition def, int instanceIndex)
         {
             var lss = new LSS(def, instanceIndex);
@@ -61,7 +52,7 @@ namespace EOSExt.LevelSpawnedSentry
                                     var state = instance.StateReplicator.State;
                                     if (Math.Abs(sentry.Ammo - state.Ammo) > 1e-4)
                                     {
-                                        var syncState = new LSSState(state) with
+                                        var syncState = new LSSSyncState(state) with
                                         {
                                             Ammo = sentry.Ammo
                                         };

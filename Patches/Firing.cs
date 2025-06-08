@@ -27,7 +27,7 @@ namespace EOSExt.LevelSpawnedSentry.Patches
             if (lssComp == null) return true;
             var state = lssComp.LSS.State;
 
-            EOSLogger.Warning("FireBullet: Override");
+            //EOSLogger.Warning("FireBullet: Override");
 
             //if (!state.TargetPlayer) return true;
 
@@ -54,12 +54,12 @@ namespace EOSExt.LevelSpawnedSentry.Patches
                 if (sentry.m_detection.HasTarget && maybePlayer != null)
                 {
                     SentryGunInstance_Firing_Bullets.s_weaponRayData.owner = sentry.m_detection.Target.GetComponent<PlayerAgent>();
-                    EOSLogger.Warning($"FireBullet: Owner <- Target: Player_{maybePlayer.Owner.PlayerSlotIndex()}");
+                    //EOSLogger.Warning($"FireBullet: Owner <- Target: Player_{maybePlayer.Owner.PlayerSlotIndex()}");
                 }
                 else
                 {
                     SentryGunInstance_Firing_Bullets.s_weaponRayData.owner = LocalPlayer.Agent;
-                    EOSLogger.Warning($"FireBullet: Owner <- LocalPlayer: Player_{LocalPlayer.Agent.Owner.PlayerSlotIndex()}");
+                    //EOSLogger.Warning($"FireBullet: Owner <- LocalPlayer: Player_{LocalPlayer.Agent.Owner.PlayerSlotIndex()}");
                 }
 
                 //SentryGunInstance_Firing_Bullets.s_weaponRayData.damage = __instance.m_archetypeData.GetSentryDamage(SentryGunInstance_Firing_Bullets.s_weaponRayData.owner, SentryGunInstance_Firing_Bullets.s_weaponRayData.rayHit.distance, targetIsTagged);
@@ -154,12 +154,12 @@ namespace EOSExt.LevelSpawnedSentry.Patches
                         if (sentry.m_detection.HasTarget && maybePlayer != null)
                         {
                             SentryGunInstance_Firing_Bullets.s_weaponRayData.owner = sentry.m_detection.Target.GetComponent<PlayerAgent>();
-                            EOSLogger.Warning($"FireBullet: Owner <- Target: Player_{maybePlayer.Owner.PlayerSlotIndex()}");
+                            //EOSLogger.Warning($"FireBullet: Owner <- Target: Player_{maybePlayer.Owner.PlayerSlotIndex()}");
                         }
                         else
                         {
                             SentryGunInstance_Firing_Bullets.s_weaponRayData.owner = LocalPlayer.Agent;
-                            EOSLogger.Warning($"FireBullet: Owner <- LocalPlayer: Player_{LocalPlayer.Agent.Owner.PlayerSlotIndex()}");
+                            //EOSLogger.Warning($"FireBullet: Owner <- LocalPlayer: Player_{LocalPlayer.Agent.Owner.PlayerSlotIndex()}");
                         }
 
 

@@ -30,6 +30,7 @@
   <ItemGroup>
     <Compile Include="Definition\LevelSpawnedSentryDefinition.cs" />
     <Compile Include="Definition\LSSState.cs" />
+    <Compile Include="Definition\LSSSyncState.cs" />
     <Compile Include="LevelSpawnedSentryManager.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -48,6 +49,7 @@
     <Compile Include="Patches\OnLSSSpawned.cs" />
     <Compile Include="Patches\OnSetup.cs" />
     <Compile Include="Patches\OnPlayerGuiLayerSetup.cs" />
+    <Compile Include="Patches\ReceiveToolRefill.cs" />
     <Compile Include="Patches\Targeting.Client.cs" />
     <Compile Include="Patches\Targeting.Common.cs" />
     <Compile Include="Patches\Targeting.Detection.cs" />

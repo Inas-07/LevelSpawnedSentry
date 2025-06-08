@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EOSExt.LevelSpawnedSentry.Definition
 {
-    public class LSSState
+    public struct LSSSyncState
     {
         public bool Enabled { get; set; } = true;
 
@@ -19,30 +19,33 @@ namespace EOSExt.LevelSpawnedSentry.Definition
 
         public bool CanRefill { get; set; } = true;
 
-        public LSSState() { }
+        public float Ammo { get; set; } = 0.5f;
 
-        public LSSState(LSSSyncState o)
+        public LSSSyncState() { }
+
+        public LSSSyncState(LSSSyncState o)
         {
             Enabled = o.Enabled;
             TargetEnemy = o.TargetEnemy;
             TargetPlayer = o.TargetPlayer;
             MarkerVisible = o.MarkerVisible;
             CanRefill = o.CanRefill;
+            Ammo = o.Ammo;
         }
 
-        public LSSState(LSSState o)
+        public LSSSyncState(LSSState o)
         {
             Enabled = o.Enabled;
             TargetEnemy = o.TargetEnemy;
             TargetPlayer = o.TargetPlayer;
             MarkerVisible = o.MarkerVisible;
             CanRefill = o.CanRefill;
+            //Ammo = o.Ammo;
         }
 
         public override string ToString()
         {
             return $"Enabled: {Enabled}, TargetEnemy/Player: {TargetEnemy}/{TargetPlayer}, CanRefill: {CanRefill}";
         }
-
     }
 }

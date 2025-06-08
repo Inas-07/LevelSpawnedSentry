@@ -30,15 +30,16 @@ namespace EOSExt.LevelSpawnedSentry
                 bool targetEnemy = e.EnemyID == 0;
                 bool targetPlayer = e.SustainedEventSlotIndex > 0;
                 bool markerVisible = e.Count == 0;
+                bool canRefill = e.FogSetting == 0;
 
-                var newState = new LSSState(lss.StateReplicator.State) with
+                var newState = new LSSSyncState(lss.State) with
                 {
                     Enabled = e.Enabled,
                     TargetEnemy = targetEnemy,
                     TargetPlayer = targetPlayer,
                     MarkerVisible = markerVisible,
+                    CanRefill = canRefill,
                     Ammo = lss.LSSComp.Sentry.Ammo,
-                    AmmoMaxCap = lss.LSSComp.Sentry.AmmoMaxCap,
                 };
 
                 lss.StateReplicator.SetState(newState);
