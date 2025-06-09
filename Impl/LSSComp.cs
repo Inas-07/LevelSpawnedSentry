@@ -63,9 +63,16 @@ namespace EOSExt.LevelSpawnedSentry.Impl
             }
             else
             {
+                if (s.m_isFiring)
+                {
+                    s.StopFiring();
+                }
+                if (s.m_isScanning)
+                {
+                    s.StopScanning();
+                }
+
                 s.m_isSetup = false;
-                s.m_isScanning = false;
-                s.m_isFiring = false;
 
                 s.Sound.Post(EVENTS.SENTRYGUN_STOP_ALL_LOOPS);
             }
