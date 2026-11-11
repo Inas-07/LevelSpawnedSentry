@@ -1,7 +1,6 @@
 ﻿using EOSExt.LevelSpawnedSentry.Impl;
 using EOSExt.LevelSpawnedSentry.PlayerGUIMessage;
 using ExtraObjectiveSetup.Utils;
-using FloLib.Infos;
 using HarmonyLib;
 using LevelGeneration;
 using SNetwork;
