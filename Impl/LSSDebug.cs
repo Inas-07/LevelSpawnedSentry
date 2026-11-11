@@ -1,7 +1,6 @@
 ﻿using Agents;
 using EOSExt.LevelSpawnedSentry.PlayerGUIMessage;
 using ExtraObjectiveSetup.Utils;
-using FloLib.Infos;
 using Gear;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;

@@ -5,7 +5,6 @@ using HarmonyLib;
 using UnityEngine;
 using System;
 using Player;
-using FloLib.Infos;
 using ExtraObjectiveSetup.Utils;
 
 namespace EOSExt.LevelSpawnedSentry.Patches

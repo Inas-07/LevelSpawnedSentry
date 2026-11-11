@@ -1,6 +1,6 @@
 ﻿using EOSExt.LevelSpawnedSentry.Definition;
 using ExtraObjectiveSetup;
-using FloLib.Networks.Replications;
+using AmorLib.Networking.StateReplicators;
 using ExtraObjectiveSetup.Utils;
 using GameData;
 using GTFO.API;
@@ -60,7 +60,7 @@ namespace EOSExt.LevelSpawnedSentry
                     Ammo = def.InitialAmmo,
                 };
 
-                StateReplicator = StateReplicator<LSSSyncState>.Create(sid, initialState, LifeTimeType.Level);
+                StateReplicator = StateReplicator<LSSSyncState>.Create(sid, initialState, LifeTimeType.Session);
                 StateReplicator.OnStateChanged += OnStateChanged;
                 if (SNet.IsMaster)
                 {

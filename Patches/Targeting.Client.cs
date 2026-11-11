@@ -1,6 +1,5 @@
 ﻿using GTFO.API;
 using HarmonyLib;
-using FloLib.Infos;
 using ExtraObjectiveSetup.Utils;
 using EOSExt.LevelSpawnedSentry.PlayerGUIMessage;
 using SNetwork;
